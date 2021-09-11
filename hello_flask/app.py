@@ -1,7 +1,8 @@
-from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
 import os
+from flask_marshmallow import Marshmallow
+from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, request, jsonify
+
 
 app = Flask(__name__)
 
@@ -36,7 +37,7 @@ guides_schema = GuideSchema(many=True)
 @app.route('/guide', methods=["POST"])
 def add_guide():
     title = request.json['title']
-    content = title = request.json['content']
+    content = request.json['content']
 
     new_guide = Guide(title, content)
 
@@ -45,6 +46,37 @@ def add_guide():
 
     guide = Guide.query.get(new_guide.id)
 
+    return guide_schema.jsonify(guide)
+
+
+# Endpoint to query all guides
+@app.route("/guides", methods=["GET"])
+def get_guides():
+    all_guides = Guide.query.all()
+    result = guides_schema.dump(all_guides)
+    return jsonify(result.data)
+
+# Endpoint for querying a single guide
+
+
+@app.route("/guide/<id>", methods=["GET"])
+def get_guide(id):
+    guide = Guide.query.get(id)
+    return guide_schema.jsonify(guide)
+
+# Endpoint for updating a guide
+
+
+@app.route("/guide/<id>", methods=["PUT"])
+def guide_update(id):
+    guide = Guide.query.get(id)
+    title = request.json['title']
+    content = request.json['content']
+
+    guide.title = title
+    guide.content = content
+
+    db.session.commit()
     return guide_schema.jsonify(guide)
 
 
