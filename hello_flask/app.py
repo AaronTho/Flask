@@ -56,17 +56,15 @@ def get_guides():
     result = guides_schema.dump(all_guides)
     return jsonify(result.data)
 
+
 # Endpoint for querying a single guide
-
-
 @app.route("/guide/<id>", methods=["GET"])
 def get_guide(id):
     guide = Guide.query.get(id)
     return guide_schema.jsonify(guide)
 
+
 # Endpoint for updating a guide
-
-
 @app.route("/guide/<id>", methods=["PUT"])
 def guide_update(id):
     guide = Guide.query.get(id)
@@ -87,7 +85,7 @@ def guide_delete(id):
     db.session.delete(guide)
     db.session.commit()
 
-    return guide_schema.jsonify(guide)
+    return "Guide was successfully deleted"
 
 
 if __name__ == '__main__':
